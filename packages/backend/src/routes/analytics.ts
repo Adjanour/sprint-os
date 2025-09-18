@@ -174,25 +174,23 @@ analyticsRoutes.get('/dora', async (c) => {
       ))
       .orderBy(desc(events.occurredAt));
     
-    // Get lead time events (from commit to deployment)
-    const leadTimeEvents = await db
-      .select()
-      .from(events)
-      .where(and(
-        eq(events.orgId, orgId),
-        gte(events.occurredAt, startDate),
-        eq(events.type, 'lead_time')
-      ))
-      .orderBy(desc(events.occurredAt));
-    
     // Calculate deployment frequency
     const deploymentFrequency = deploymentEvents.length / (days / 7); // per week
     
-    // Calculate lead time for changes
-    const leadTimes = leadTimeEvents.map(event => {
-      const payload = event.payload as any;
-      return payload?.leadTimeHours || 0;
-    });
+    // Calculate lead time for changes using deployment events
+    const leadTimes = deploymentEvents
+      .map(event => {
+        const payload = event.payload as any;
+        // Assume payload.commitTimestamp is ISO string of commit time
+        if (payload?.commitTimestamp && event.occurredAt) {
+          const commitTime = new Date(payload.commitTimestamp).getTime();
+          const deployTime = new Date(event.occurredAt).getTime();
+          // lead time in hours
+          return (deployTime - commitTime) / (1000 * 60 * 60);
+        }
+        return null;
+      })
+      .filter((lt): lt is number => lt !== null && !isNaN(lt));
     
     const avgLeadTime = leadTimes.length > 0 
       ? leadTimes.reduce((sum, time) => sum + time, 0) / leadTimes.length 
