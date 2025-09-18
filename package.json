@@ -1,0 +1,35 @@
+{
+  "name": "sprintos",
+  "version": "0.1.0",
+  "description": "Engineering Operations OS - GitHub integration for sprints, issues, and PRs",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd packages/backend && npm run dev",
+    "dev:frontend": "cd packages/frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd packages/backend && npm run build",
+    "build:frontend": "cd packages/frontend && npm run build",
+    "start": "cd packages/backend && npm run start",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "db:migrate": "cd packages/backend && npm run db:migrate",
+    "db:seed": "cd packages/backend && npm run db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "github",
+    "sprints",
+    "project-management",
+    "engineering-ops",
+    "devops",
+    "agile"
+  ],
+  "author": "SprintOS Team",
+  "license": "MIT"
+}
