@@ -17,6 +17,10 @@ const LoginPage = () => {
 
   const handleGitHubLogin = () => {
     const clientId = process.env.VITE_GITHUB_CLIENT_ID
+    if (!clientId) {
+      window.alert("GitHub Client ID is not configured. Please contact support.")
+      return
+    }
     const redirectUri = `${window.location.origin}/login`
     
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=user:email,read:org`
